@@ -1,6 +1,6 @@
-import db from "../../Config/config.firebase.js";
-import type { Iuser } from "../../Interface/user/user.models.interface.js";
-import type { IuserRepository } from "./IuserRepository.js";
+import db from "../../Config/config.firebase.ts";
+import type { Iuser } from "../../Interface/user/user.models.interface.ts";
+import type { IuserRepository } from "./IuserRepository.ts";
 
 export class userRepository implements IuserRepository {
     async findByEmail(email: string): Promise<Iuser | null> {
@@ -15,7 +15,7 @@ export class userRepository implements IuserRepository {
         });
         return userData;
     }
-    async findUserById(id:string):Promise<Iuser|null>{
+    async findUserById(id: string): Promise<Iuser | null> {
         const userRef = db.collection('users').doc(id);
         const doc = await userRef.get();
         if (!doc.exists) {
