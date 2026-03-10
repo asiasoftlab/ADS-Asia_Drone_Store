@@ -1,12 +1,13 @@
 import admin from "firebase-admin";
 import { createRequire } from "module";
+
 const require = createRequire(import.meta.url);
 const serviceAccount = require("../../serviceAccountKey.json");
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-    databaseURL: "https://ads-asia-drone-store-default-rtdb.asia-southeast1.firebasedatabase.app"
+  credential: admin.credential.cert(serviceAccount),
 });
+
 const db = admin.firestore();
 
 export default db;
