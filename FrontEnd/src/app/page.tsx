@@ -21,7 +21,7 @@ export default function Home() {
         const storedUserStr = typeof window !== "undefined" ? localStorage.getItem("user") : null;
 
         if (!token || !storedUserStr) {
-            router.push("/login");
+            router.push("/auth/login");
         } else {
             try {
                 const storedUser = JSON.parse(storedUserStr);
@@ -31,7 +31,7 @@ export default function Home() {
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
                 localStorage.removeItem("user");
-                router.push("/login");
+                router.push("/auth/login");
             }
             setIsLoading(false);
         }
@@ -41,7 +41,7 @@ export default function Home() {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
-        router.push("/login");
+        router.push("/auth/login");
     };
 
     if (isLoading) {

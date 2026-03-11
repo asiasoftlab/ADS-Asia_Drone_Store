@@ -35,7 +35,7 @@ export default function RegisterPage() {
 
             if (res.ok && data.success) {
                 // Success
-                router.push("/login");
+                router.push("/auth/login");
             } else {
                 setError(data.message || "Registration failed");
             }
@@ -103,7 +103,7 @@ export default function RegisterPage() {
                 </div>
 
                 <p className="mt-6 text-center text-sm text-slate-400">
-                    Already have an account? <Link href="/login" className="text-blue-400 hover:text-blue-300 font-medium">Log in</Link>
+                    Already have an account? <Link href="/auth/login" className="text-blue-400 hover:text-blue-300 font-medium">Log in</Link>
                 </p>
             </form>
         </div>

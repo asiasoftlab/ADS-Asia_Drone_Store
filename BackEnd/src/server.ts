@@ -1,5 +1,5 @@
-import express from "express";
 import dotenv from "dotenv";
+import express from "express";
 import cors from "cors";
 import { userRoutes } from "./Routes/user/userRoutes.ts";
 import { userController } from "./Controllers/user/userControllers.ts";
@@ -17,7 +17,11 @@ const userSvc = new userService(userRepo);
 const userCtrl = new userController(userSvc);
 const userRouter = new userRoutes(userCtrl);
 
+import { authRoutes } from "./Routes/auth.routes.ts";
+const authRouter = new authRoutes();
+
 app.use("/", userRouter.getUserRoutes());
+app.use("/auth", authRouter.getAuthRoutes());
 
 
 const PORT = process.env.PORT || 7878;
