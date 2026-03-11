@@ -14,8 +14,26 @@ export default function RegisterPage() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
+    const validateEmail = (email: string) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (name.trim().length < 3) {
+            setError("Name must be at least 3 characters long");
+            return;
+        }
+        if (!validateEmail(email)) {
+            setError("Please enter a valid email address");
+            return;
+        }
+        if (password.length < 6) {
+            setError("Password must be at least 6 characters long");
+            return;
+        }
+
         setLoading(true);
         setError("");
 
@@ -99,22 +117,24 @@ export default function RegisterPage() {
                         <label className="block text-sm font-medium text-slate-300 mb-1">Full Name</label>
                         <input
                             type="text"
-                            placeholder="Pilot Name"
+                            placeholder="Enter Your Name"
                             required
                             className="bg-slate-900 border border-slate-700 text-white w-full p-3 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            suppressHydrationWarning
                         />
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-slate-300 mb-1">Email Address</label>
                         <input
                             type="email"
-                            placeholder="pilot@drone.com"
+                            placeholder="Enter Your Email Address"
                             required
                             className="bg-slate-900 border border-slate-700 text-white w-full p-3 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            suppressHydrationWarning
                         />
                     </div>
                     <div>
@@ -126,14 +146,16 @@ export default function RegisterPage() {
                             className="bg-slate-900 border border-slate-700 text-white w-full p-3 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            suppressHydrationWarning
                         />
                     </div>
                     <button
                         type="submit"
                         disabled={loading}
                         className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] disabled:opacity-50 text-white font-semibold w-full p-3 rounded-lg transition-all mt-4 shadow-lg shadow-blue-500/20"
+                        suppressHydrationWarning
                     >
-                        {loading ? "Registering system..." : "Register Initial Pilot"}
+                        {loading ? "Registering..." : "Register"}
                     </button>
 
                     <div className="flex items-center my-4">
@@ -147,6 +169,7 @@ export default function RegisterPage() {
                         onClick={loginWithGoogle}
                         disabled={loading}
                         className="flex flex-row items-center justify-center gap-3 bg-white text-slate-800 hover:bg-slate-100 active:scale-[0.98] disabled:opacity-50 font-semibold w-full p-3 rounded-lg transition-all shadow-lg"
+                        suppressHydrationWarning
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
