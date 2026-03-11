@@ -16,6 +16,7 @@ export class authRoutes {
         this.router.post("/verify-reset-otp", this.controller.verifyResetOtp.bind(this.controller));
         this.router.post("/reset-password", this.controller.resetPassword.bind(this.controller));
         this.router.post("/resend-reset-otp", this.controller.resendResetOtp.bind(this.controller));
+        this.router.post("/google-login", this.controller.googleLogin.bind(this.controller));
     }
 
     public getAuthRoutes() {

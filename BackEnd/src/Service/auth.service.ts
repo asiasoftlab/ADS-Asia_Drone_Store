@@ -1,26 +1,24 @@
 import { authRepository } from "../Repository/auth.repository.ts";
 import { sendResetOTPEmail } from "../utils/email.service.ts";
 import bcrypt from "bcrypt";
+import { admin } from "../Config/config.firebase.ts";
+import { jwtToken } from "../utils/jwt.ts";
 
 export class authService {
     private repo: authRepository;
+    private jwtUtils: jwtToken;
 
     constructor() {
         this.repo = new authRepository();
+        this.jwtUtils = new jwtToken();
     }
 
     async forgotPassword(email: string) {
-        // console.log(`\n--- Forgot Password Request Received ---`);
-        // console.log(`Looking up email in Firebase: ${email}`);
-
         const user = await this.repo.findUserByEmail(email);
         if (!user) {
             console.log(`❌ Error: User with email ${email} DOES NOT exist in Firebase database.`);
             throw new Error("User not found");
         }
-
-        // console.log(`✅ User found in database! Creating OTP...`);
-
         // Generate 6 digit OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         console.log(`Generated OTP is:  ${otp}`);
@@ -37,8 +35,7 @@ export class authService {
 
     async verifyResetOtp(email: string, otp: string) {
         const user = await this.repo.findUserByEmail(email);
-        // console.log(`Verifying OTP for: ${email} `);
-        // console.log(`OTP is: ${otp}`);
+        
         if (!user) {
             throw new Error("User not found");
         }
@@ -76,8 +73,6 @@ export class authService {
             throw new Error("User not found");
         }
 
-        // Check if previous OTP was generated less than 60s ago
-        // To be simpler, if resetOtpExpiry is > 4 mins from now, that means it was sent < 1 min ago
         if (user.resetOtpExpiry) {
             const timeRemaining = new Date(user.resetOtpExpiry).getTime() - Date.now();
             if (timeRemaining > 4 * 60 * 1000) {
@@ -92,5 +87,47 @@ export class authService {
         await sendResetOTPEmail(user.name,email, otp);
 
         return { message: "New OTP sent to email successfully" };
+    }
+
+    async googleLogin(token: string) {
+        try {
+            const decodedToken = await admin.auth().verifyIdToken(token);
+            const { email, name, picture, uid } = decodedToken;
+
+            if (!email) {
+                throw new Error("No email found in Firebase token");
+            }
+
+            let user = await this.repo.findUserByEmail(email);
+
+            if (!user) {
+                user = await this.repo.createUser({
+                    name: name || "Google User",
+                    email: email,
+                    image: picture || "",
+                    provider: "google",
+                    firebaseUid: uid,
+                    role: "user"
+                });
+            }
+
+            const accessToken = this.jwtUtils.generateAccessToken({ id: user._id, email: user.email, role: user.role || "user" });
+            const refreshToken = this.jwtUtils.generateRefreshToken({ id: user._id, email: user.email, role: user.role || "user" });
+
+            return {
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    image: user.image,
+                    role: user.role || "user"
+                },
+                accessToken,
+                refreshToken
+            };
+        } catch (error) {
+            console.error("Google Login Error:", error);
+            throw new Error("Invalid or expired Google token");
+        }
     }
 }

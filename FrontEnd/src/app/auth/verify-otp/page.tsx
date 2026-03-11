@@ -12,9 +12,11 @@ export default function VerifyOtpPage() {
     const [loading, setLoading] = useState(false);
     const [resendLoading, setResendLoading] = useState(false);
     const [countdown, setCountdown] = useState(60);
+    const [isMounted, setIsMounted] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
+        setIsMounted(true);
         const storedEmail = localStorage.getItem("resetEmail");
         if (!storedEmail) {
             router.push("/auth/forgot-password");
@@ -87,6 +89,8 @@ export default function VerifyOtpPage() {
             setResendLoading(false);
         }
     };
+
+    if (!isMounted) return null;
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-slate-900">

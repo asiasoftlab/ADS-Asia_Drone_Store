@@ -5,6 +5,7 @@ import { userRoutes } from "./Routes/user/userRoutes.ts";
 import { userController } from "./Controllers/user/userControllers.ts";
 import { userRepository } from "./Repository/user/userRepository.ts";
 import { userService } from "./Service/user/userService.ts";
+import { authRoutes } from "./Routes/auth.routes.ts";
 
 const app = express();
 dotenv.config();
@@ -17,7 +18,7 @@ const userSvc = new userService(userRepo);
 const userCtrl = new userController(userSvc);
 const userRouter = new userRoutes(userCtrl);
 
-import { authRoutes } from "./Routes/auth.routes.ts";
+
 const authRouter = new authRoutes();
 
 app.use("/", userRouter.getUserRoutes());

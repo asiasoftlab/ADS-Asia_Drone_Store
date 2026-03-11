@@ -11,6 +11,8 @@ const firebaseConfig = {
     measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 let analytics;
@@ -18,4 +20,6 @@ if (typeof window !== "undefined") {
     analytics = getAnalytics(app);
 }
 
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
 export { app, analytics };

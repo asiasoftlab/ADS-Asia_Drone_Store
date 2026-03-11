@@ -32,4 +32,19 @@ export class authRepository {
         });
         return true;
     }
+
+    async createUser(userData: any) {
+        let docRef;
+        if (userData._id) {
+            docRef = usersCollection.doc(userData._id);
+        } else {
+            docRef = usersCollection.doc();
+            userData._id = docRef.id;
+        }
+        await docRef.set({
+            ...userData,
+            createdAt: new Date()
+        });
+        return userData;
+    }
 }

@@ -11,9 +11,11 @@ export default function ResetPasswordPage() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
+        setIsMounted(true);
         const storedEmail = localStorage.getItem("resetEmail");
         if (!storedEmail) {
             router.push("/auth/forgot-password");
@@ -63,6 +65,8 @@ export default function ResetPasswordPage() {
             setLoading(false);
         }
     };
+
+    if (!isMounted) return null;
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-slate-900">
