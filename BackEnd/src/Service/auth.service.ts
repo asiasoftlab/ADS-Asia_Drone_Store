@@ -79,7 +79,6 @@ export class authService {
                 throw new Error("Please wait 60 seconds before requesting a new OTP");
             }
         }
-
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiry = new Date(Date.now() + 5 * 60 * 1000);
 
