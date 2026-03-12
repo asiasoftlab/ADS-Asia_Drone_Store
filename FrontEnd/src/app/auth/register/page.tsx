@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
+import { PasswordInput } from "@/components/PasswordInput";
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
@@ -139,8 +140,7 @@ export default function RegisterPage() {
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-slate-300 mb-1">Password</label>
-                        <input
-                            type="password"
+                        <PasswordInput
                             placeholder="••••••••"
                             required
                             className="bg-slate-900 border border-slate-700 text-white w-full p-3 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
