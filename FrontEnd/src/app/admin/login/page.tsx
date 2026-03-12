@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PasswordInput } from "@/components/PasswordInput";
+import { ShieldAlert } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
+
 
 export default function AdminLoginPage() {
     const [email, setEmail] = useState("");
@@ -10,21 +13,6 @@ export default function AdminLoginPage() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-
-    useEffect(() => {
-        const checkLogin = () => {
-            const userStr = localStorage.getItem("user");
-            if (userStr) {
-                try {
-                    const user = JSON.parse(userStr);
-                    if (user && user.role === "admin") {
-                        router.push("/admin/dashboard");
-                    }
-                } catch(e) {}
-            }
-        };
-        checkLogin();
-    }, [router]);
 
     const validateEmail = (email: string) => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -65,43 +53,57 @@ export default function AdminLoginPage() {
                 localStorage.setItem("user", JSON.stringify(data.result));
                 router.push("/admin/dashboard");
             } else {
-                setError(data.message || "Invalid credentials");
+                setError(data.message || "Invalid Admin Credentials");
             }
         } catch (err) {
-            setError("Something went wrong. Is backend running?");
+            setError("Network Error. Is the backend running?");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-slate-900">
-            <form onSubmit={handleSubmit} className="border border-slate-700 bg-slate-800 p-8 rounded-xl w-full max-w-md shadow-2xl">
-                <h2 className="text-3xl font-bold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-300">
-                    Admin Portal
-                </h2>
+        <div className="flex justify-center items-center min-h-screen bg-slate-50 relative overflow-hidden">
+            {/* Defensive Abstract Background Elements */}
+            <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-red-100 blur-[150px] pointer-events-none"></div>
+            <div className="absolute bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-brand-orange/10 blur-[120px] pointer-events-none"></div>
 
-                {error && <div className="bg-red-500/20 border border-red-500/30 text-red-400 p-3 rounded-lg mb-4 text-sm text-center">{error}</div>}
+            <form onSubmit={handleSubmit} className="relative z-10 border border-slate-200 bg-white/80 backdrop-blur-2xl p-8 sm:p-10 rounded-2xl w-full max-w-md shadow-xl">
+                {/* Brand Logo & Admin Shield */}
+                <div className="flex flex-col items-center mb-4">
+                    <h2 className="text-sm uppercase tracking-[0.1em] font-bold text-red-600 mt-4">Admin Portal</h2>
+                </div>
 
-                <div className="space-y-4">
+
+                <div className="mb-6 text-center">
+                    <p className="text-slate-500 text-sm font-medium">Authorized personnel only</p>
+                </div>
+
+                {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-xl mb-6 text-sm text-center font-medium animate-in fade-in slide-in-from-top-1">
+                        {error}
+                    </div>
+                )}
+
+                <div className="space-y-5">
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">Admin Email</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Admin Identity</label>
                         <input
                             type="email"
                             placeholder="admin@example.com"
                             required
-                            className="bg-slate-900 border border-slate-700 text-white w-full p-3 rounded-lg focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
+                            className="bg-slate-50 border border-slate-200 text-slate-900 w-full p-3.5 rounded-xl focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder:text-slate-400"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             suppressHydrationWarning
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">Password</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Security Key</label>
                         <PasswordInput
                             placeholder="••••••••"
                             required
-                            className="bg-slate-900 border border-slate-700 text-white w-full p-3 rounded-lg focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
+                            className="bg-slate-50 border border-slate-200 text-slate-900 w-full p-3.5 rounded-xl focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all placeholder:text-slate-400"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             suppressHydrationWarning
@@ -110,11 +112,17 @@ export default function AdminLoginPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 active:scale-[0.98] disabled:opacity-50 text-white font-semibold w-full p-3 rounded-lg transition-all mt-4 shadow-lg shadow-red-500/20"
+                        className="bg-gradient-to-r from-red-600 to-brand-orange-dark hover:from-red-500 hover:to-orange-600 active:scale-[0.98] disabled:opacity-50 text-white font-bold tracking-wide uppercase text-sm w-full p-4 rounded-xl transition-all mt-4 shadow-lg shadow-red-500/20"
                         suppressHydrationWarning
                     >
                         {loading ? "Authenticating..." : "Login"}
                     </button>
+                    
+                    <div className="text-center pt-4">
+                        <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-semibold">
+                            Connection encrypted • IPv6 Secure
+                        </span>
+                    </div>
                 </div>
             </form>
         </div>

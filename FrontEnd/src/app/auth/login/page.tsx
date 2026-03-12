@@ -6,6 +6,8 @@ import Link from "next/link";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { PasswordInput } from "@/components/PasswordInput";
+import { Logo } from "@/components/ui/Logo";
+
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -20,7 +22,7 @@ export default function LoginPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!validateEmail(email)) {
             setError("Please enter a valid email address");
             return;
@@ -48,7 +50,6 @@ export default function LoginPage() {
             const data = await res.json();
 
             if (res.ok && data.success) {
-                // Success, save tokens and redirect
                 localStorage.setItem("accessToken", data.accessToken);
                 localStorage.setItem("refreshToken", data.refreshToken);
                 localStorage.setItem("user", JSON.stringify(data.result));
@@ -58,9 +59,9 @@ export default function LoginPage() {
             }
         } catch (err) {
             if (err instanceof Error) {
-                setError(err.message || "Something went wrong. Is backend running?");
+                setError(err.message || "Network Error. Please try again.");
             } else {
-                setError("Something went wrong. Is backend running?");
+                setError("Network Error. Please try again.");
             }
         } finally {
             setLoading(false);
@@ -101,33 +102,54 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-slate-900">
-            <form onSubmit={handleSubmit} className="border border-slate-700 bg-slate-800 p-8 rounded-xl w-full max-w-md shadow-2xl">
-                <h2 className="text-3xl font-bold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
-                    Login
-                </h2>
+        <div className="flex justify-center items-center min-h-screen bg-slate-50 relative overflow-hidden">
+            {/* Abstract Background Elements */}
+            <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-brand-blue/10 blur-[120px] pointer-events-none"></div>
+            <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-brand-orange/10 blur-[120px] pointer-events-none"></div>
 
-                {error && <div className="bg-red-500/20 border border-red-500/30 text-red-400 p-3 rounded-lg mb-4 text-sm text-center">{error}</div>}
+            <form onSubmit={handleSubmit} className="relative z-10 border border-slate-200 bg-white/80 backdrop-blur-xl p-8 sm:p-10 rounded-2xl w-full max-w-md shadow-xl">
+                {/* Brand Logo Area */}
+                {/* <div className="flex flex-col items-center mb-8">
+                    <Logo width={160} height={160} />
+                    <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-brand-orange -mt-2">Fly Your Passion</span>
+                </div> */}
 
-                <div className="space-y-4">
+
+                <div className="mb-6 text-center">
+                    <h2 className="text-2xl font-semibold text-slate-900">Welcome Back</h2>
+                    <p className="text-slate-500 text-sm mt-1">Sign in to your dashboard</p>
+                </div>
+
+                {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-xl mb-6 text-sm text-center font-medium animate-in fade-in slide-in-from-top-1">
+                        {error}
+                    </div>
+                )}
+
+                <div className="space-y-5">
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">Email Address</label>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Email Address</label>
                         <input
                             type="email"
-                            placeholder="Your Email Address"
+                            placeholder="Enter your email"
                             required
-                            className="bg-slate-900 border border-slate-700 text-white w-full p-3 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                            className="bg-slate-50 border border-slate-200 text-slate-900 w-full p-3.5 rounded-xl focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue transition-all placeholder:text-slate-400"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             suppressHydrationWarning
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">Password</label>
+                        <div className="flex justify-between items-center mb-2">
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500">Password</label>
+                            <Link href="/auth/forgot-password" className="text-xs text-brand-orange hover:text-brand-orange-dark font-medium transition-colors">
+                                Forgot Password?
+                            </Link>
+                        </div>
                         <PasswordInput
-                            placeholder="••••••••"
+                            placeholder="Enter your password"
                             required
-                            className="bg-slate-900 border border-slate-700 text-white w-full p-3 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                            className="bg-slate-50 border border-slate-200 text-slate-900 w-full p-3.5 rounded-xl focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue transition-all placeholder:text-slate-400"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             suppressHydrationWarning
@@ -136,23 +158,23 @@ export default function LoginPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] disabled:opacity-50 text-white font-semibold w-full p-3 rounded-lg transition-all mt-4 shadow-lg shadow-blue-500/20"
+                        className="bg-gradient-to-r from-brand-orange to-brand-orange-dark hover:from-brand-orange-dark hover:to-orange-700 active:scale-[0.98] disabled:opacity-50 text-white font-semibold w-full p-3.5 rounded-xl transition-all mt-4 shadow-lg shadow-brand-orange/20"
                         suppressHydrationWarning
                     >
-                        {loading ? "Authenticating..." : "Login"}
+                        {loading ? "Authenticating..." : "Sign In"}
                     </button>
 
-                    <div className="flex items-center my-4">
-                        <div className="flex-grow border-t border-slate-700"></div>
-                        <span className="flex-shrink-0 mx-4 text-slate-400 text-sm">or</span>
-                        <div className="flex-grow border-t border-slate-700"></div>
+                    <div className="flex items-center my-6">
+                        <div className="flex-grow border-t border-slate-200"></div>
+                        <span className="flex-shrink-0 mx-4 text-slate-400 text-xs font-medium uppercase tracking-wider">or</span>
+                        <div className="flex-grow border-t border-slate-200"></div>
                     </div>
 
                     <button
                         type="button"
                         onClick={loginWithGoogle}
                         disabled={loading}
-                        className="flex flex-row items-center justify-center gap-3 bg-white text-slate-800 hover:bg-slate-100 active:scale-[0.98] disabled:opacity-50 font-semibold w-full p-3 rounded-lg transition-all shadow-lg"
+                        className="flex flex-row items-center justify-center gap-3 bg-white text-slate-700 hover:bg-slate-50 active:scale-[0.98] disabled:opacity-50 font-semibold w-full p-3.5 rounded-xl transition-all shadow-sm border border-slate-200 hover:border-slate-300"
                         suppressHydrationWarning
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -165,13 +187,8 @@ export default function LoginPage() {
                     </button>
                 </div>
 
-                <div className="mt-6 flex flex-col items-center space-y-2 text-sm text-slate-400">
-                    <p>
-                        First time here? <Link href="/auth/register" className="text-blue-400 hover:text-blue-300 font-medium">Create an account</Link>
-                    </p>
-                    <p>
-                        <Link href="/auth/forgot-password" className="text-blue-400 hover:text-blue-300 font-medium">Forgot Password?</Link>
-                    </p>
+                <div className="mt-8 text-center text-sm text-slate-500 font-medium">
+                    New to ADS? <Link href="/auth/register" className="text-brand-orange hover:text-brand-orange-dark transition-colors">Create an account</Link>
                 </div>
             </form>
         </div>

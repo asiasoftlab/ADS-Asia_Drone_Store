@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "ADS Drone Store",
-  description: "Drone e-commerce platform",
+  title: "Asia Drone Store",
+  description: "Drone e-commerce platform by asia softlab",
 };
 
 export default function RootLayout({

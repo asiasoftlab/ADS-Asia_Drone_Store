@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { PasswordInput } from "@/components/PasswordInput";
+import { ShieldCheck } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
+
 
 export default function ResetPasswordPage() {
     const [password, setPassword] = useState("");
@@ -30,13 +33,13 @@ export default function ResetPasswordPage() {
         setError("");
 
         if (password !== confirmPassword) {
-            setError("Passwords do not match");
+            setError("Security keys do not match");
             setLoading(false);
             return;
         }
 
         if (password.length < 6) {
-            setError("Password must be at least 6 characters");
+            setError("Security key must be at least 6 characters");
             setLoading(false);
             return;
         }
@@ -57,10 +60,10 @@ export default function ResetPasswordPage() {
                     router.push("/auth/login");
                 }, 2000);
             } else {
-                setError(data.message || "Failed to reset password");
+                setError(data.message || "Failed to establish new security key");
             }
         } catch (err: any) {
-            setError(err.message || "Something went wrong.");
+            setError(err.message || "Network Error.");
         } finally {
             setLoading(false);
         }
@@ -69,37 +72,44 @@ export default function ResetPasswordPage() {
     if (!isMounted) return null;
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-slate-900">
-            <form onSubmit={handleSubmit} className="border border-slate-700 bg-slate-800 p-8 rounded-xl w-full max-w-md shadow-2xl">
-                <h2 className="text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
-                    Set New Password
-                </h2>
-                <p className="text-slate-400 text-sm text-center mb-6">
-                    Almost there! Enter your new strong password below.
-                </p>
+        <div className="flex justify-center items-center min-h-screen bg-slate-50 relative overflow-hidden">
+            <div className="absolute top-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-brand-orange/10 blur-[120px] pointer-events-none"></div>
+            <div className="absolute bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none"></div>
 
-                {error && <div className="bg-red-500/20 border border-red-500/30 text-red-400 p-3 rounded-lg mb-4 text-sm text-center">{error}</div>}
-                {success && <div className="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 p-3 rounded-lg mb-4 text-sm text-center">{success}</div>}
+            <form onSubmit={handleSubmit} className="relative z-10 border border-slate-200 bg-white/80 backdrop-blur-xl p-8 sm:p-10 rounded-2xl w-full max-w-md shadow-xl">
+                <div className="flex flex-col items-center mb-8">
+                    <Logo width={160} height={160} />
+                    <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-emerald-600 -mt-2">Secure Protocol Active</span>
+                </div>
+
+
+                <div className="mb-6 text-center">
+                    <h2 className="text-2xl font-semibold text-slate-900">New Security Key</h2>
+                    <p className="text-slate-500 text-sm mt-2 leading-relaxed">
+                        Identity verified. Establish a new pilot access code below.
+                    </p>
+                </div>
+
+                {error && <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-xl mb-6 text-sm text-center font-medium animate-in fade-in">{error}</div>}
+                {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-600 p-3 rounded-xl mb-6 text-sm text-center font-medium animate-in fade-in">{success}</div>}
 
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">New Password</label>
-                        <input
-                            type="password"
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">New Access Code</label>
+                        <PasswordInput
                             placeholder="••••••••"
                             required
-                            className="bg-slate-900 border border-slate-700 text-white w-full p-3 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                            className="bg-slate-50 border border-slate-200 text-slate-900 w-full p-3.5 rounded-xl focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-all placeholder:text-slate-400"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">Confirm New Password</label>
-                        <input
-                            type="password"
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Verify Access Code</label>
+                        <PasswordInput
                             placeholder="••••••••"
                             required
-                            className="bg-slate-900 border border-slate-700 text-white w-full p-3 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                            className="bg-slate-50 border border-slate-200 text-slate-900 w-full p-3.5 rounded-xl focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-all placeholder:text-slate-400"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
@@ -108,10 +118,15 @@ export default function ResetPasswordPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.98] disabled:opacity-50 text-white font-semibold w-full p-3 rounded-lg transition-all mt-4 shadow-lg shadow-emerald-500/20"
+                        className="bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 active:scale-[0.98] disabled:opacity-50 text-white font-semibold w-full p-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20 mt-4 uppercase tracking-widest text-sm"
                     >
-                        {loading ? "Updating Password..." : "Reset Password & Login"}
+                        {loading ? "Re-encrypting Access..." : "Initialize New Key"}
                     </button>
+                    <div className="mt-4 text-center">
+                        <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">
+                            End-to-End Encryption
+                        </span>
+                    </div>
                 </div>
             </form>
         </div>

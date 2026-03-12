@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ShieldCheck } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
+
 
 export default function VerifyOtpPage() {
     const [otp, setOtp] = useState("");
@@ -52,10 +55,10 @@ export default function VerifyOtpPage() {
                     router.push("/auth/reset-password");
                 }, 1000);
             } else {
-                setError(data.message || "Invalid OTP");
+                setError(data.message || "Invalid Authorization Sequence");
             }
         } catch (err: any) {
-            setError(err.message || "Something went wrong.");
+            setError(err.message || "Network Error. Sequence rejected.");
         } finally {
             setLoading(false);
         }
@@ -79,12 +82,12 @@ export default function VerifyOtpPage() {
 
             if (res.ok && data.success) {
                 setSuccess(data.message);
-                setCountdown(60); // Reset timer
+                setCountdown(60);
             } else {
-                setError(data.message || "Failed to resend OTP");
+                setError(data.message || "Failed to transmit new sequence");
             }
         } catch (err: any) {
-            setError(err.message || "Something went wrong.");
+            setError(err.message || "Network Error.");
         } finally {
             setResendLoading(false);
         }
@@ -93,18 +96,29 @@ export default function VerifyOtpPage() {
     if (!isMounted) return null;
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-slate-900">
-            <form onSubmit={handleSubmit} className="border border-slate-700 bg-slate-800 p-8 rounded-xl w-full max-w-md shadow-2xl">
-                <h2 className="text-3xl font-bold mb-4 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
-                    Verify OTP
-                </h2>
-                <p className="text-slate-400 text-sm text-center mb-6">
-                    Enter the 6-digit verification code sent to <br />
-                    <span className="font-semibold text-slate-200">{email}</span>
-                </p>
+        <div className="flex justify-center items-center min-h-screen bg-slate-50 relative overflow-hidden">
+            <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-brand-blue/10 blur-[120px] pointer-events-none"></div>
+            <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-brand-orange/10 blur-[120px] pointer-events-none"></div>
 
-                {error && <div className="bg-red-500/20 border border-red-500/30 text-red-400 p-3 rounded-lg mb-4 text-sm text-center">{error}</div>}
-                {success && <div className="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 p-3 rounded-lg mb-4 text-sm text-center">{success}</div>}
+            <form onSubmit={handleSubmit} className="relative z-10 border border-slate-200 bg-white/80 backdrop-blur-xl p-8 sm:p-10 rounded-2xl w-full max-w-md shadow-xl">
+                <div className="flex flex-col items-center mb-8">
+                    <Logo width={160} height={160} />
+                    <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-brand-orange -mt-2">Identity Verification</span>
+                </div>
+
+
+                <div className="mb-6 text-center">
+                    <p className="text-slate-500 text-sm mt-2 leading-relaxed">
+                        Input the secure 6-digit flight clearance transmitted to
+                        <br />
+                        <span className="font-semibold text-slate-900 mt-1 border border-slate-200 bg-slate-100/50 px-3 py-1 rounded inline-block">
+                            {email}
+                        </span>
+                    </p>
+                </div>
+
+                {error && <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-xl mb-6 text-sm text-center font-medium animate-in fade-in">{error}</div>}
+                {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-600 p-3 rounded-xl mb-6 text-sm text-center font-medium animate-in fade-in">{success}</div>}
 
                 <div className="space-y-4">
                     <div>
@@ -113,7 +127,7 @@ export default function VerifyOtpPage() {
                             maxLength={6}
                             placeholder="••••••"
                             required
-                            className="bg-slate-900 border border-slate-700 text-white w-full p-4 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-center text-2xl tracking-[0.5em] font-mono"
+                            className="bg-slate-50 border border-slate-200 text-brand-orange w-full p-4 rounded-xl focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange transition-all text-center text-3xl font-black tracking-[0.7em] placeholder:text-slate-300 uppercase"
                             value={otp}
                             onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
                         />
@@ -122,26 +136,28 @@ export default function VerifyOtpPage() {
                     <button
                         type="submit"
                         disabled={loading || otp.length < 6}
-                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] disabled:opacity-50 text-white font-semibold w-full p-3 rounded-lg transition-all shadow-lg shadow-blue-500/20"
+                        className="bg-gradient-to-r from-brand-orange to-brand-orange-dark hover:from-brand-orange-dark hover:to-orange-700 active:scale-[0.98] disabled:opacity-50 text-white font-semibold w-full p-4 rounded-xl transition-all shadow-lg shadow-brand-orange/20 mt-4 uppercase tracking-widest text-sm"
                     >
-                        {loading ? "Verifying..." : "Verify Code"}
+                        {loading ? "Verifying Sequence..." : "Confirm Identity"}
                     </button>
 
-                    <div className="text-center mt-4">
+                    <div className="text-center mt-6">
                         <button
                             type="button"
                             onClick={handleResend}
                             disabled={countdown > 0 || resendLoading}
-                            className={`text-sm font-medium ${countdown > 0 ? "text-slate-500 cursor-not-allowed" : "text-blue-400 hover:text-blue-300"}`}
+                            className={`text-xs font-semibold uppercase tracking-wider transition-colors ${countdown > 0 ? "text-slate-400 cursor-not-allowed" : "text-brand-orange hover:text-brand-orange-dark"}`}
                         >
-                            {resendLoading ? "Resending..." : countdown > 0 ? `Resend OTP in ${countdown}s` : "Didn't receive a code? Resend"}
+                            {resendLoading ? "Retransmitting..." : countdown > 0 ? `Retransmit available in ${countdown}s` : "Request New Sequence"}
                         </button>
                     </div>
                 </div>
 
-                <p className="mt-8 text-center text-sm text-slate-400">
-                    <Link href="/auth/forgot-password" className="text-blue-400 hover:text-blue-300 font-medium">&larr; Back to Email Entry</Link>
-                </p>
+                <div className="mt-8 pt-6 border-t border-slate-200 text-center text-xs text-slate-500 font-medium">
+                    <Link href="/auth/forgot-password" className="text-slate-500 hover:text-slate-700 transition-colors uppercase tracking-widest">
+                        &larr; Re-enter Pilot Email
+                    </Link>
+                </div>
             </form>
         </div>
     );
