@@ -14,7 +14,7 @@ export const Logo = ({ className = "", width = 120, height = 120, showText = fal
     <Link href="/" className={`flex items-center gap-3 group ${className}`}>
       <div className="relative overflow-hidden rounded-xl transition-transform duration-300 group-hover:scale-105">
         <Image
-          src="/ADS-logo.webp"
+          src="/log-ads.png"
           alt="ADS Logo"
           width={width}
           height={height}
