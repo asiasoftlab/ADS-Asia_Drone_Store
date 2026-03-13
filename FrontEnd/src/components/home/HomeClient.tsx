@@ -7,7 +7,7 @@ export default function HomeClient() {
     const [user, setUser] = useState<UserProfile | null>(null);
 
     useEffect(() => {
-        const storedUserStr = localStorage.getItem("user");
+        const storedUserStr = localStorage.getItem("userData");
         if (storedUserStr) {
             try {
                 setUser(JSON.parse(storedUserStr));

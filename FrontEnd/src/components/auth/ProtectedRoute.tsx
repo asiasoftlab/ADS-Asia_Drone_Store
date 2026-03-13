@@ -15,14 +15,25 @@ export default function ProtectedRoute({ children, allowedRole }: ProtectedRoute
 
     useEffect(() => {
         const checkAuth = () => {
-            const token = localStorage.getItem("accessToken");
-            const storedUserStr = localStorage.getItem("user");
+            // Determine storage keys based on target route or role
+            const isAdminPath = pathname.startsWith('/admin');
+            const targetRole = allowedRole || (isAdminPath ? 'admin' : 'user');
+            
+            const tokenKey = targetRole === 'admin' ? "adminAccessToken" : "accessToken";
+            const userKey = targetRole === 'admin' ? "adminData" : "userData";
+
+            const token = localStorage.getItem(tokenKey);
+            const storedUserStr = localStorage.getItem(userKey);
 
             if (!token || !storedUserStr) {
-                // If not logged in, redirect to appropriate login page
-                if (pathname.startsWith('/admin')) {
+                // If not logged in for this specific context, redirect
+                if (isAdminPath) {
                     router.push("/admin/login");
+                } else if (allowedRole === 'user') {
+                    router.push("/auth/login");
                 } else {
+                    // Default fallback
+                    setIsAuthorized(false);
                     router.push("/auth/login");
                 }
                 return;
@@ -32,18 +43,18 @@ export default function ProtectedRoute({ children, allowedRole }: ProtectedRoute
                 const user = JSON.parse(storedUserStr);
                 
                 // Role-based logic
-                if (allowedRole && user.role !== allowedRole) {
-                    // If wrong role, redirect to unauthorized or home
-                    console.warn(`Access denied: required ${allowedRole}, but user is ${user.role}`);
+                if (targetRole && user.role !== targetRole) {
+                    console.warn(`Access denied: context requires ${targetRole}, but user is ${user.role}`);
+                    // Redirect to their respective dashboard
                     router.push(user.role === 'admin' ? "/admin/dashboard" : "/");
                     return;
                 }
 
                 setIsAuthorized(true);
             } catch (err) {
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("user");
-                router.push("/auth/login");
+                localStorage.removeItem(tokenKey);
+                localStorage.removeItem(userKey);
+                router.push(isAdminPath ? "/admin/login" : "/auth/login");
             }
         };
         

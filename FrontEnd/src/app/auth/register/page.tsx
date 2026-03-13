@@ -94,7 +94,7 @@ export default function RegisterPage() {
             if (res.ok && data.success) {
                 localStorage.setItem("accessToken", data.accessToken);
                 localStorage.setItem("refreshToken", data.refreshToken);
-                localStorage.setItem("user", JSON.stringify(data.user));
+                localStorage.setItem("userData", JSON.stringify(data.user));
                 router.push("/");
             } else {
                 setError(data.message || "Google registration failed");

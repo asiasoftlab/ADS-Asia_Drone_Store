@@ -16,7 +16,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             return;
         }
 
-        const userStr = localStorage.getItem("user");
+        const userStr = localStorage.getItem("adminData");
         if (!userStr) {
             router.push("/admin/login");
             return;

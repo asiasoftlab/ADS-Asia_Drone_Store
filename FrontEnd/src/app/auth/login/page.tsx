@@ -52,7 +52,7 @@ export default function LoginPage() {
             if (res.ok && data.success) {
                 localStorage.setItem("accessToken", data.accessToken);
                 localStorage.setItem("refreshToken", data.refreshToken);
-                localStorage.setItem("user", JSON.stringify(data.result));
+                localStorage.setItem("userData", JSON.stringify(data.result));
                 router.push("/");
             } else {
                 setError(data.message || "Invalid credentials");
@@ -89,7 +89,7 @@ export default function LoginPage() {
             if (res.ok && data.success) {
                 localStorage.setItem("accessToken", data.accessToken);
                 localStorage.setItem("refreshToken", data.refreshToken);
-                localStorage.setItem("user", JSON.stringify(data.user));
+                localStorage.setItem("userData", JSON.stringify(data.user));
                 router.push("/");
             } else {
                 setError(data.message || "Google authentication failed");

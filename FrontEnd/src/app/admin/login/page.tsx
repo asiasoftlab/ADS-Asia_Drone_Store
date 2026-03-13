@@ -48,9 +48,9 @@ export default function AdminLoginPage() {
             const data = await res.json();
 
             if (res.ok && data.success) {
-                localStorage.setItem("accessToken", data.accessToken);
-                localStorage.setItem("refreshToken", data.refreshToken);
-                localStorage.setItem("user", JSON.stringify(data.result));
+                localStorage.setItem("adminAccessToken", data.accessToken);
+                localStorage.setItem("adminRefreshToken", data.refreshToken);
+                localStorage.setItem("adminData", JSON.stringify(data.result));
                 router.push("/admin/dashboard");
             } else {
                 setError(data.message || "Invalid Admin Credentials");

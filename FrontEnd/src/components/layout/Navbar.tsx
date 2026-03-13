@@ -45,12 +45,17 @@ export function Navbar() {
     useEffect(() => {
         const checkUser = () => {
             const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-            const storedUserStr = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+            const storedUserStr = typeof window !== "undefined" ? localStorage.getItem("userData") : null;
 
             if (token && storedUserStr) {
                 try {
                     const storedUser = JSON.parse(storedUserStr);
-                    setUser(storedUser);
+                    // Explicitly only allow 'user' role on the main navbar
+                    if (storedUser.role === 'user') {
+                        setUser(storedUser);
+                    } else {
+                        setUser(null);
+                    }
                 } catch {
                     setUser(null);
                 }
@@ -72,7 +77,7 @@ export function Navbar() {
     const handleLogout = () => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        localStorage.removeItem("user");
+        localStorage.removeItem("userData");
         setUser(null);
         router.push("/auth/login");
     };

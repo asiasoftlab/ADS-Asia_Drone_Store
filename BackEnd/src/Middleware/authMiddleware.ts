@@ -48,3 +48,15 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
         }
     });
 };
+
+export const userMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+    // First run the authMiddleware to verify token and attach req.user
+    authMiddleware(req, res, () => {
+        if (req.user && req.user.role === "user") {
+            next();
+        } else {
+            res.status(403).json({ success: false, message: "Access denied. User privileges required." });
+            return;
+        }
+    });
+};

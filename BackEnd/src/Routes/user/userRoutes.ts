@@ -1,7 +1,7 @@
 import express from "express";
 import type { Request, Response } from "express";
 import { userController } from "../../Controllers/user/userControllers.ts";
-import { authMiddleware } from "../../Middleware/authMiddleware.ts";
+import { authMiddleware, userMiddleware } from "../../Middleware/authMiddleware.ts";
 
 export class userRoutes {
     private userController: userController;
@@ -26,7 +26,7 @@ export class userRoutes {
         });
 
         // Protected routes (auth required)
-        this.userRoutes.get("/user/profile", authMiddleware, (req: Request, res: Response) => {
+        this.userRoutes.get("/user/profile", userMiddleware, (req: Request, res: Response) => {
             this.userController.getUserProfile(req, res);
         });
     }

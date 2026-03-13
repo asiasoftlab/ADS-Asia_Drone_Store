@@ -9,9 +9,9 @@ export default function AdminDashboardPage() {
     const router = useRouter();
 
     const handleLogout = () => {
-        localStorage.removeItem("user");
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("adminData");
+        localStorage.removeItem("adminAccessToken");
+        localStorage.removeItem("adminRefreshToken");
         router.push("/admin/login");
     };
 
