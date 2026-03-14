@@ -70,7 +70,12 @@ export default function BannerSlider() {
             {/* Slides */}
             <div 
                 className="flex transition-transform duration-1000 cubic-bezier(0.4, 0, 0.2, 1) h-[60vh] sm:h-[75vh] lg:h-screen"
+<<<<<<< HEAD
                 style={{ transform: `translateX(-${current * 100}%)` }}>
+=======
+                style={{ transform: `translateX(-${current * 100}%)` }}
+            >
+>>>>>>> 96d90d2309866ddeb522f005ec6c9723c9d2a921
                 {banners.map((banner) => (
                     <div key={banner.id} className="min-w-full h-full relative">
                         <picture>
@@ -95,8 +100,15 @@ export default function BannerSlider() {
                                     </h2>
                                     {banner.link && (
                                         <div className="animate-in slide-in-from-bottom-12 duration-1000 delay-300">
+<<<<<<< HEAD
                                             <a href={banner.link}
                                                 className="inline-flex items-center gap-3 bg-brand-orange hover:bg-white hover:text-brand-orange px-6 py-3 md:px-10 md:py-4 rounded-full font-black uppercase text-xs md:text-sm tracking-widest transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-brand-orange/40">
+=======
+                                            <a 
+                                                href={banner.link}
+                                                className="inline-flex items-center gap-3 bg-brand-orange hover:bg-white hover:text-brand-orange px-6 py-3 md:px-10 md:py-4 rounded-full font-black uppercase text-xs md:text-sm tracking-widest transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-brand-orange/40"
+                                            >
+>>>>>>> 96d90d2309866ddeb522f005ec6c9723c9d2a921
                                                 Explore Now
                                             </a>
                                         </div>
@@ -113,12 +125,22 @@ export default function BannerSlider() {
                 <>
                     <button 
                         onClick={prevSlide}
+<<<<<<< HEAD
                         className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-3 md:p-5 rounded-full bg-white/5 backdrop-blur-xl text-white border border-white/10 opacity-0 group-hover:opacity-100 transition-all hover:bg-brand-orange hover:border-brand-orange hidden sm:flex items-center justify-center z-20">
+=======
+                        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-3 md:p-5 rounded-full bg-white/5 backdrop-blur-xl text-white border border-white/10 opacity-0 group-hover:opacity-100 transition-all hover:bg-brand-orange hover:border-brand-orange hidden sm:flex items-center justify-center z-20"
+                    >
+>>>>>>> 96d90d2309866ddeb522f005ec6c9723c9d2a921
                         <ChevronLeft size={28} />
                     </button>
                     <button 
                         onClick={nextSlide}
+<<<<<<< HEAD
                         className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-3 md:p-5 rounded-full bg-white/5 backdrop-blur-xl text-white border border-white/10 opacity-0 group-hover:opacity-100 transition-all hover:bg-brand-orange hover:border-brand-orange hidden sm:flex items-center justify-center z-20">
+=======
+                        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-3 md:p-5 rounded-full bg-white/5 backdrop-blur-xl text-white border border-white/10 opacity-0 group-hover:opacity-100 transition-all hover:bg-brand-orange hover:border-brand-orange hidden sm:flex items-center justify-center z-20"
+                    >
+>>>>>>> 96d90d2309866ddeb522f005ec6c9723c9d2a921
                         <ChevronRight size={28} />
                     </button>
                     
@@ -130,8 +152,15 @@ export default function BannerSlider() {
                                 onClick={() => setCurrent(i)}
                                 className={`group relative h-1.5 transition-all duration-500 rounded-full ${
                                     current === i ? "w-12 bg-brand-orange" : "w-4 bg-white/30 hover:bg-white/60"
+<<<<<<< HEAD
                                 }`}>
                                 <span className={`absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white transition-opacity duration-300 ${current === i ? "opacity-100" : "opacity-0"}`}>
+=======
+                                }`}
+                            >
+                                <span className={`absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white transition-opacity duration-300 ${current === i ? "opacity-100" : "opacity-0"}`}>
+                                    0{i + 1}
+>>>>>>> 96d90d2309866ddeb522f005ec6c9723c9d2a921
                                 </span>
                             </button>
                         ))}
