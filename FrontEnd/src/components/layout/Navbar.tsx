@@ -244,7 +244,7 @@ export function Navbar() {
                                         <div className="py-1 border-b border-slate-100">
                                             <Link href="/profile" className="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-brand-blue transition-colors">
                                                 <UserCircle size={18} />
-                                                <span>Public profile</span>
+                                                <span>My profile</span>
                                             </Link>
                                             <Link href="/profile/edit" className="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-brand-blue transition-colors">
                                                 <UserCircle size={18} />
