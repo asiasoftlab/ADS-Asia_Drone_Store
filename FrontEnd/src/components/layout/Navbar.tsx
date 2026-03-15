@@ -10,6 +10,7 @@ import { User, LogOut, Menu, X, Heart, ShoppingCart, Bell,
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 import toast from "react-hot-toast";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
 
 export interface UserProfile {
     id?: string;
@@ -32,6 +33,7 @@ export function Navbar() {
     const [user, setUser] = useState<UserProfile | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     // Handle scroll effect for dynamic navbar styling
     useEffect(() => {
@@ -76,11 +78,16 @@ export function Navbar() {
     }
 
     const handleLogout = () => {
+        setIsLogoutModalOpen(true);
+    };
+
+    const confirmLogout = () => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("userData");
         setUser(null);
         toast.success("Successfully logged out!");
+        setIsLogoutModalOpen(false);
         router.push("/auth/login");
     };
 
@@ -88,8 +95,8 @@ export function Navbar() {
         <nav 
             className={`sticky top-0 z-50 transition-all duration-300 w-full ${
                 isScrolled 
-                ? "bg-white/95 backdrop-blur-md shadow-lg shadow-black/5 py-3" 
-                : "bg-white py-5 border-b border-slate-100"
+                ? "bg-transparent backdrop-blur-md py-3" 
+                : "bg-white py-3 border-b border-slate-100"
             }`}>
             <div className="mx-auto px-4 md:px-8 flex justify-between items-center relative">
                 
@@ -105,7 +112,7 @@ export function Navbar() {
                             key={link.name} 
                             href={link.path}
                             className={`relative text-[15px] font-medium transition-colors hover:text-brand-orange group py-2 ${
-                                pathname === link.path ? "text-brand-orange" : "text-brand-blue-dark"
+                                pathname === link.path ? "text-brand-orange" : isScrolled ? "text-white" : "text-brand-blue-dark"
                             }`}
                         >
                             {link.name}
@@ -123,21 +130,21 @@ export function Navbar() {
                     
                     {/* Action Icons */}
                     <div className="flex items-center gap-5 mr-2">
-                        <Link href={user ? "/wishlist" : "/auth/login"} className="text-brand-blue-dark hover:text-brand-orange transition-colors relative" title="Wishlist">
+                        <Link href={user ? "/wishlist" : "/auth/login"} className={`hover:text-brand-orange transition-colors ${isScrolled ? "text-white" : "text-brand-blue-dark"}`}>
                             <Heart size={20} strokeWidth={2} />
                         </Link>
-                        <Link href={user ? "/cart" : "/auth/login"} className="text-brand-blue-dark hover:text-brand-orange transition-colors relative" title="Cart">
+                        <Link href={user ? "/cart" : "/auth/login"} className={`hover:text-brand-orange transition-colors ${isScrolled ? "text-white" : "text-brand-blue-dark"}`}>
                             <ShoppingCart size={20} strokeWidth={2} />
                         </Link>
-                        <Link href={user ? "/notifications" : "/auth/login"} className="text-brand-blue-dark hover:text-brand-orange transition-colors relative" title="Notifications">
+                        <Link href={user ? "/notifications" : "/auth/login"} className={`hover:text-brand-orange transition-colors ${isScrolled ? "text-white" : "text-brand-blue-dark"}`}>
                             <Bell size={20} strokeWidth={2} />
                         </Link>
                     </div>
 
                     {user ? (
                         <div className="flex items-center gap-4">
-                            <span className="text-sm font-medium text-slate-500 hidden xl:block">
-                                Welcome, <span className="text-brand-blue-dark capitalize">{user.name.split(' ')[0]}</span>
+                            <span className={`text-sm font-medium hidden xl:block ${isScrolled ? "text-white" : "text-brand-blue-dark"}`}>
+                                Welcome, <span className="text-brand-orange capitalize">{user.name.split(' ')[0]}</span>
                             </span>
                             
                             <div className="relative group cursor-pointer">
@@ -410,6 +417,15 @@ export function Navbar() {
                     )}
                 </div>
             </div>
+            <ConfirmationModal 
+                isOpen={isLogoutModalOpen}
+                onClose={() => setIsLogoutModalOpen(false)}
+                onConfirm={confirmLogout}
+                title="Log Out"
+                message="Are you sure you want to log out of your account? You will need to sign in again to access your private data."
+                confirmText="Yes, Log Out"
+                type="warning"
+            />
         </nav>
     );
 }

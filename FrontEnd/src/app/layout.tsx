@@ -1,13 +1,18 @@
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { Poppins } from "next/font/google";
+import { Toaster } from "react-hot-toast"
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata = {
   title: "Asia Drone Store",
   description: "Drone e-commerce platform by asia softlab",
 };
-
-import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
   children,
@@ -15,15 +20,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning className="bg-slate-50 text-slate-800 font-sans relative overflow-x-hidden min-h-screen flex flex-col">
-        <Toaster position="top-center" reverseOrder={false} />
+    <html lang="en">
+      <body
+        className={`${poppins.className} bg-slate-50 text-slate-800 relative overflow-x-hidden min-h-screen flex flex-col`}
+      >
+        <Toaster />
+
         <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-brand-blue/5 blur-[500px] pointer-events-none -z-10"></div>
         <div className="fixed bottom-[20%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-brand-orange/5 blur-[100px] pointer-events-none -z-10"></div>
+
         <Navbar />
+
         <main className="flex-1">
           {children}
         </main>
+
         <Footer />
       </body>
     </html>

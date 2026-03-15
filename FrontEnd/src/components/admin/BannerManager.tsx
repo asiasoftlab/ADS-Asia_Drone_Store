@@ -12,8 +12,10 @@ import {
     query, 
     orderBy 
 } from "firebase/firestore";
-import { Plus, Trash2, Edit2, Save, X, Image as ImageIcon, ExternalLink } from "lucide-react";
+import { Plus, Trash2, Edit2, Save, X, Image as ImageIcon, ExternalLink, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+import Modal from "@/components/ui/Modal";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
 
 interface Banner {
     id: string;
@@ -30,6 +32,8 @@ export default function BannerManager() {
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [bannerToDelete, setBannerToDelete] = useState<string | null>(null);
 
     // Form states
     const [formData, setFormData] = useState({
@@ -92,17 +96,25 @@ export default function BannerManager() {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this banner?")) return;
+    const handleDeleteClick = (id: string) => {
+        setBannerToDelete(id);
+    };
+
+    const confirmDelete = async () => {
+        if (!bannerToDelete) return;
         
+        setIsDeleting(true);
         const loadingToast = toast.loading("Deleting banner...");
         try {
-            await deleteDoc(doc(db, "banners", id));
+            await deleteDoc(doc(db, "banners", bannerToDelete));
             toast.success("Banner deleted successfully", { id: loadingToast });
+            setBannerToDelete(null);
             fetchBanners();
         } catch (error) {
             console.error("Error deleting banner:", error);
             toast.error("Failed to delete banner", { id: loadingToast });
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -137,16 +149,25 @@ export default function BannerManager() {
                 </button>
             </div>
 
-            {isAdding && (
-                <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
+            <Modal 
+                isOpen={isAdding} 
+                onClose={() => {
+                    setIsAdding(false);
+                    setEditingId(null);
+                    setFormData({ title: "", imageUrl: "", link: "", status: "active" });
+                }} 
+                title={editingId ? "Edit Banner" : "Create New Banner"}
+                maxWidth="2xl"
+            >
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Banner Title(Optional)</label>
+                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Banner Title (Optional)</label>
                                 <input 
                                     type="text" 
                                     placeholder="e.g. Summer Sale 2026"
-                                    className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-brand-orange"
+                                    className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all"
                                     value={formData.title}
                                     onChange={e => setFormData({...formData, title: e.target.value})}
                                 />
@@ -156,7 +177,7 @@ export default function BannerManager() {
                                 <input 
                                     type="text" 
                                     placeholder="https://example.com/banner.jpg"
-                                    className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-brand-orange"
+                                    className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all"
                                     value={formData.imageUrl}
                                     onChange={e => setFormData({...formData, imageUrl: e.target.value})}
                                     required
@@ -165,11 +186,11 @@ export default function BannerManager() {
                         </div>
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Action link (Optional)</label>
+                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Action Link (Optional)</label>
                                 <input 
                                     type="text" 
                                     placeholder="/products/new-arrivals"
-                                    className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-brand-orange"
+                                    className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all"
                                     value={formData.link}
                                     onChange={e => setFormData({...formData, link: e.target.value})}
                                 />
@@ -177,7 +198,7 @@ export default function BannerManager() {
                             <div>
                                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Status</label>
                                 <select 
-                                    className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-brand-orange"
+                                    className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:border-brand-orange focus:ring-4 focus:ring-brand-orange/5 transition-all appearance-none"
                                     value={formData.status}
                                     onChange={e => setFormData({...formData, status: e.target.value as "active" | "inactive"})}
                                 >
@@ -187,14 +208,24 @@ export default function BannerManager() {
                             </div>
                         </div>
                     </div>
-                    <div className="mt-6 flex justify-end">
+                    <div className="pt-4 flex justify-end gap-3">
+                        <button 
+                            type="button"
+                            onClick={() => {
+                                setIsAdding(false);
+                                setEditingId(null);
+                            }}
+                            className="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-all cursor-pointer"
+                        >
+                            Cancel
+                        </button>
                         <button 
                             type="submit"
                             disabled={isSaving}
-                            className="flex items-center gap-2 bg-brand-blue-dark text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-900 transition-all shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex items-center gap-2 bg-brand-blue-dark text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-900 transition-all shadow-lg shadow-slate-900/10 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-w-[160px] justify-center"
                         >
                             {isSaving ? (
-                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                <Loader2 size={18} className="animate-spin" />
                             ) : (
                                 <Save size={18} />
                             )}
@@ -202,7 +233,7 @@ export default function BannerManager() {
                         </button>
                     </div>
                 </form>
-            )}
+            </Modal>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loading ? (Array(3).fill(0).map((_, i) => (
@@ -237,7 +268,7 @@ export default function BannerManager() {
                                         <Edit2 size={16} strokeWidth={2.5} />
                                     </button>
                                     <button 
-                                        onClick={() => handleDelete(banner.id)}
+                                        onClick={() => handleDeleteClick(banner.id)}
                                         className="p-2.5 bg-white/95 backdrop-blur shadow-xl rounded-xl text-slate-700 hover:text-red-500 transition-colors cursor-pointer"
                                         title="Delete Banner"
                                     >
@@ -272,6 +303,16 @@ export default function BannerManager() {
                     </div>
                 )}
             </div>
+            <ConfirmationModal 
+                isOpen={!!bannerToDelete}
+                onClose={() => setBannerToDelete(null)}
+                onConfirm={confirmDelete}
+                title="Delete Banner"
+                message="Are you sure you want to delete this banner? This action cannot be undone and it will be removed from the home page rotation."
+                confirmText="Yes, Delete it"
+                type="danger"
+                isLoading={isDeleting}
+            />
         </div>
     );
 }

@@ -24,6 +24,7 @@ import {
     Loader2
 } from "lucide-react";
 import toast from "react-hot-toast";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
 
 interface User {
     id: string;
@@ -41,6 +42,7 @@ export default function UserManager() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [updatingId, setUpdatingId] = useState<string | null>(null);
+    const [userToUpdate, setUserToUpdate] = useState<User | null>(null);
 
     useEffect(() => {
         fetchUsers();
@@ -61,12 +63,17 @@ export default function UserManager() {
         }
     };
 
-    const toggleUserStatus = async (user: User) => {
+    const toggleUserStatusClick = (user: User) => {
+        setUserToUpdate(user);
+    };
+
+    const confirmToggleStatus = async () => {
+        if (!userToUpdate) return;
+        
+        const user = userToUpdate;
         const newStatus = user.status === "active" ? "blocked" : "active";
         
-        // Use custom confirmation toast or just standard confirm
-        if (!confirm(`Are you sure you want to ${newStatus === "blocked" ? "BLOCK" : "UNBLOCK"} ${user.name}?`)) return;
-
+        setUserToUpdate(null);
         setUpdatingId(user.id);
         const loadingToast = toast.loading(`${newStatus === "blocked" ? "Blocking" : "Unblocking"} user...`);
         
@@ -225,7 +232,7 @@ export default function UserManager() {
                                         </td>
                                         <td className="px-6 py-5 text-right">
                                             <button 
-                                                onClick={() => toggleUserStatus(user)}
+                                                onClick={() => toggleUserStatusClick(user)}
                                                 disabled={updatingId === user.id}
                                                 className={`p-2.5 rounded-xl transition-all shadow-sm active:scale-95 ${
                                                     user.status === 'blocked'
@@ -277,6 +284,16 @@ export default function UserManager() {
                     <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Blocked Accounts</h4>
                     <div className="text-3xl font-black">{users.filter(u => u.status === 'blocked').length}</div>
                 </div>
+            <ConfirmationModal 
+                isOpen={!!userToUpdate}
+                onClose={() => setUserToUpdate(null)}
+                onConfirm={confirmToggleStatus}
+                title={userToUpdate?.status === "active" ? "Block User" : "Unblock User"}
+                message={`Are you sure you want to ${userToUpdate?.status === "active" ? "BLOCK" : "UNBLOCK"} ${userToUpdate?.name}? This will affect their ability to log in and use the platform.`}
+                confirmText={userToUpdate?.status === "active" ? "Yes, Block" : "Yes, Unblock"}
+                type={userToUpdate?.status === "active" ? "danger" : "info"}
+                isLoading={updatingId === userToUpdate?.id}
+            />
             </div>
         </div>
     );

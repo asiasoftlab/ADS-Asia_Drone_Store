@@ -9,7 +9,9 @@ import { authRoutes } from "./Routes/auth.routes.ts";
 import { adminRoutes } from "./Routes/admin/adminRoutes.ts";
 
 const app = express();
-dotenv.config();
+dotenv.config({
+    quiet: true
+})
 
 app.use(cors());
 app.use(express.json());

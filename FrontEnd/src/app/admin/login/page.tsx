@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
                 localStorage.setItem("adminAccessToken", data.accessToken);
                 localStorage.setItem("adminRefreshToken", data.refreshToken);
                 localStorage.setItem("adminData", JSON.stringify(data.result));
-                toast.success("Welcome back, Administrator");
+                toast.success("Welcome back, Vishnu");
                 router.push("/admin/dashboard");
             } else {
                 const errorMsg = data.message || "Invalid Admin Credentials";
@@ -79,12 +79,9 @@ export default function AdminLoginPage() {
                 <div className="flex flex-col items-center mb-4">
                     <h2 className="text-sm uppercase tracking-[0.1em] font-bold text-red-600 mt-4">Admin Portal</h2>
                 </div>
-
-
                 <div className="mb-6 text-center">
                     <p className="text-slate-500 text-sm font-medium">Authorized personnel only</p>
                 </div>
-
                 {error && (
                     <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-xl mb-6 text-sm text-center font-medium animate-in fade-in slide-in-from-top-1">
                         {error}

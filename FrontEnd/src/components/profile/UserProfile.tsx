@@ -8,6 +8,7 @@ import { User, Mail, Phone, MapPin, Camera, Save, Trash2, Loader2, Edit3, Chevro
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
 
 interface UserProfileProps {
     isEdit?: boolean;
@@ -18,6 +19,8 @@ export default function UserProfile({ isEdit = false }: UserProfileProps) {
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
 
@@ -65,6 +68,7 @@ export default function UserProfile({ isEdit = false }: UserProfileProps) {
         const newErrors: any = {};
         if (!formData.name.trim() || formData.name.trim().length < 3) {
             newErrors.name = "Name must be at least 3 characters long";
+            
         }
         if (formData.phone && !/^\d{10}$/.test(formData.phone)) {
             newErrors.phone = "Phone number must be exactly 10 digits";
@@ -131,8 +135,12 @@ export default function UserProfile({ isEdit = false }: UserProfileProps) {
         );
     };
 
-    const handleDelete = async () => {
-        if (!confirm("Are you sure you want to delete your account? This cannot be undone.")) return;
+    const handleDelete = () => {
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        setIsDeleting(true);
         try {
             await deleteDoc(doc(db, "users", user.id));
             localStorage.clear();
@@ -141,6 +149,9 @@ export default function UserProfile({ isEdit = false }: UserProfileProps) {
             toast.success("Account deleted");
         } catch (error) {
             toast.error("Delete failed");
+        } finally {
+            setIsDeleting(false);
+            setIsDeleteModalOpen(false);
         }
     };
 
@@ -247,7 +258,7 @@ export default function UserProfile({ isEdit = false }: UserProfileProps) {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide opacity-70">Delivery Address</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide opacity-70">Delivery Address with Pincode</label>
                     {isEdit ? (
                         <div className="space-y-1">
                             <div className="relative">
@@ -290,7 +301,16 @@ export default function UserProfile({ isEdit = false }: UserProfileProps) {
                         </div>
                     </div>
                 )}
-            </div>
-        </div>
-    );
+                <ConfirmationModal 
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={confirmDelete}
+                title="Delete Account"
+                message="Are you sure you want to delete your account? This action is permanent and cannot be undone. All your data will be removed."
+                confirmText="Yes, Delete Account"
+                type="danger"
+                isLoading={isDeleting}
+            />
+        </div></div>
+    )
 }

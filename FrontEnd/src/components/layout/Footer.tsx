@@ -162,7 +162,7 @@ export function Footer() {
                 {/* Bottom Bar */}
                 <div className="pt-10 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-slate-400 text-sm text-center text-white md:text-left">
-                        © {currentYear} Asia Drone Store. All Rights Reserved. Built with <span className="text-brand-orange">Drone Store</span> by Asia Softlab.
+                        © {currentYear} <span className="text-brand-orange">Asia Drone Store</span>. All Rights Reserved. Designed and developed by Asia Softlab.
                     </p>
                     <div className="flex flex-wrap justify-center gap-6">
                         {/* privacy policy & terms and conditions */}
